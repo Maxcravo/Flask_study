@@ -4,9 +4,5 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-  try:
-    SQLALCHEMY_URI = os.environ.get("DATABASE_URI")
-  except: 
-    print ("CONFIGURAR O DATABSE URI nas variáveis de ambiente")
+  SQLALCHEMY_URI = os.environ.get("DATABASE_URI") # CRiamos uma constante que pega das variáveis de ambiente o DATABASE_URI definido pelo desenvolvedor usando o comando export 
   SQLALCHEMY_TRACK_MODIFICATIONS = False
-    
