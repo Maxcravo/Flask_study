@@ -1,5 +1,6 @@
 from flask import Flask
 from config import Config
+from  extensions import db
 from flask_src.main import bp as main_bp
 from flask_src.camera import bp as camera_bp
 
@@ -8,6 +9,7 @@ def create_app(config_class=Config):
   app.config.from_object(config_class) # realiza o processo de configuracao da aplicacao envolvendo principalmente a conexão com o Banco de dados
    
   # Initialize Flask extensions here
+  db.init_app(app)
 
   # Register blueprints here
   app.register_blueprint(main_bp)
