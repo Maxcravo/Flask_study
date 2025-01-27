@@ -1,7 +1,5 @@
 #https://www.digitalocean.com/community/tutorials/how-to-structure-a-large-flask-application-with-flask-blueprints-and-flask-sqlalchemy
 import os
-from dotenv import load_dotenv
-load_dotenv() # importo arquivo .env que fica na raiz do projeto e configura as duas variáveis da classe Config
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

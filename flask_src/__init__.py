@@ -3,6 +3,9 @@ from config import Config
 from extensions import db
 from flask_src.main import bp as main_bp
 from flask_src.camera import bp as camera_bp
+from flask_src.ai_integration import bp as ia_bp
+from dotenv import load_dotenv
+load_dotenv() # importo arquivo .env que fica na raiz do projeto e configura as duas variáveis da classe Config
 
 def create_app(config_class=Config):
   app = Flask(__name__) # inicia uma instância do flask, para funcionar dessa forma é necessário definir a variavel de ambiente FLASK_APP=nome da pasta que fica o arquivo __init__.py
@@ -14,6 +17,7 @@ def create_app(config_class=Config):
   # Register blueprints here
   app.register_blueprint(main_bp)
   app.register_blueprint(camera_bp)
+  app.register_blueprint(ia_bp)
   
   
   @app.route("/test/")
