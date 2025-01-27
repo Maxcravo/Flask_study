@@ -18,10 +18,26 @@ def getfile():
 
 def text_summary():
   nest_asyncio.apply()
-  llm = Groq(model="llama3-8b-8192")
-  Settings.llm = llm
-  Settings.embed_model = HuggingFaceEmbedding()
+  # Connecting to groq and set the model, dowloading embedding
+  try:
+    llm = Groq(model="llama3-8b-8192")
+    Settings.llm = llm
+    Settings.embed_model = HuggingFaceEmbedding()
+  except: #TODO aqui tem que retornar um erro
+    return print("error in get connect to Groq or dowload hugging face Embed")
+  # getting the file from user
   file_path = getfile()
-  # implementar essa funcão de uma forma que ele leia todos o arquivo pdf do diretório sem a necessidade de passar o nome dele
   documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
-  print(documents)
+  
+  #spliting the given file in nodes to summarize
+  splitter = SentenceSplitter(chunk_size=2024)
+  nodes = splitter.get_nodes_from_documents(documents)
+  summary_query = SummaryIndex(nodes).as_query_engine(
+    response_mode = "tree_summarize",
+    use_async= True
+  )
+  try:
+    response = summary_query.query("summarize in detail the given document but not surpass 10k tokens")
+  except:
+    print("problem with the return of the Groq API")
+  return response
