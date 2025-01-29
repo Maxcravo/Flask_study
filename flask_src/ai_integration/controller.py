@@ -9,11 +9,35 @@ from llama_index.core import Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 import nest_asyncio
 os.environ["GROQ_API_KEY"]
+import asyncio
+
+#!Uma outra forma de tilizar o tk do python de modo que não pare a execucão principal( main thread) é usar o asyncio para forcar o mesmo e rodar em um
+# thread diferente, lembrando que a própria biblioteca do tk não suporta async
+# criamos a funcão que vai forcar o Tk a rodar de forma assincrona, criamos um event loop e rodamos nossa funcão sync_getfile nele
+# async def getfile_async():
+#   # cria um weaper
+#   loop = asyncio.get_running_loop()
+#   return await loop.run_in_executor(None, sync_getfile )
+# # A funcão get)file
+# def sync_getfile():
+#   root = tk.Tk()
+#   root.withdraw()
+#   file_path = filedialog.askopenfile()
+#   root.destroy()
+#   return file_path
+  
+# async def get_async():
+#   try:
+#     file = await getfile()
+#   except Exception as e:
+#     print(e)
+#     return None
 
 def getfile():
   root = tk.Tk()
   root.withdraw()
   file_path = filedialog.askopenfilename()
+  root.destroy()
   return file_path
 
 def text_summary():
@@ -23,8 +47,8 @@ def text_summary():
     llm = Groq(model="llama3-8b-8192")
     Settings.llm = llm
     Settings.embed_model = HuggingFaceEmbedding()
-  except: #TODO aqui tem que retornar um erro
-    return print("error in get connect to Groq or dowload hugging face Embed")
+  except Exception as e : #TODO aqui tem que retornar um erro
+    return print(f"error in get connect to Groq or dowload hugging face Embed: {e}")
   # getting the file from user
   file_path = getfile()
   documents = SimpleDirectoryReader(input_files=[file_path]).load_data()
@@ -38,6 +62,6 @@ def text_summary():
   )
   try:
     response = summary_query.query("summarize in detail the given document but not surpass 10k tokens")
-  except:
-    print("problem with the return of the Groq API")
+  except Exception as e:
+    print(f"problem with the return of the Groq API: {e}")
   return response
