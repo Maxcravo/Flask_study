@@ -4,6 +4,7 @@ from extensions import db
 from flask_src.main import bp as main_bp
 from flask_src.camera import bp as camera_bp
 from flask_src.ai_integration import bp as ia_bp
+from flask_src.db_controler import bp as db_bp
 from dotenv import load_dotenv
 load_dotenv() # importo arquivo .env que fica na raiz do projeto e configura as duas variáveis da classe Config
 
@@ -18,6 +19,7 @@ def create_app(config_class=Config):
   app.register_blueprint(main_bp)
   app.register_blueprint(camera_bp)
   app.register_blueprint(ia_bp)
+  app.register_blueprint(db_bp)
   
   
   @app.route("/test/")

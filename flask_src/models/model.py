@@ -11,7 +11,7 @@ class Test(db.Model):
   
 class Ai_summary(db.Model):
   __tablename__ = "ai_summary"
-  id = db.Column(db.Integer, primary_key = True)
+  id = db.Column(db.Integer, primary_key = True, autoincrement=True )
   title = db.Column(db.String(30))
   summary = db.Column(db.Text)
   

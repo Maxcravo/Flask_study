@@ -8,4 +8,3 @@ def camera_capture():
     
     if (cv.waitKey(10) & 0xFF == ord("q")):
       break
- 

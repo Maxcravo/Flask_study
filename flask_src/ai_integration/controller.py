@@ -9,7 +9,6 @@ from llama_index.core import Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 import nest_asyncio
 os.environ["GROQ_API_KEY"]
-import asyncio
 
 #!Uma outra forma de tilizar o tk do python de modo que não pare a execucão principal( main thread) é usar o asyncio para forcar o mesmo e rodar em um
 # thread diferente, lembrando que a própria biblioteca do tk não suporta async
