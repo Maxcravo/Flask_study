@@ -26,9 +26,9 @@ def get_summary(summary_title):
      return jsonify({"error: missing summary title"}), 500
   try:
     response = db.session.query(Ai_summary).filter_by(title = summary_title).first()
-    print(f"resposta do database: {response}")
-    return jsonify({"summary": str(response.summary)}), 200
-
+    # print(f"resposta do database: {response.summary}")
+    if response is not None:
+      return response.summary
   except SQLAlchemyError as e:
     db.session.rollback()
     return jsonify({"error": str(e)}), 500
