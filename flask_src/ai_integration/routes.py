@@ -1,5 +1,6 @@
 from flask_src.ai_integration import bp
 from flask_src.ai_integration.controller import text_summary
+from flask_src.ai_integration.summary_to_diagram import summary_to_diagram
 from flask_src.models.model import Ai_summary
 from flask_src.models.model_util import insert_summary, get_summary
 from sqlalchemy.exc import SQLAlchemyError
@@ -27,16 +28,12 @@ def initialize_ai():
 @bp.route("/ai/get")
 def initialize_file():
   try:
-    response = get_summary()
-    return response
+    response = get_summary(summary_title="first Insert")
   except Exception as e:
     return e
-   
-  # #! the right way
-  # docs = db.session.query(Ai_summary).all()
-  # for doc in docs:
-  #     print(f"ID: {doc.id}")
-  #     print(f"Title: {doc.title}")
-  #     print(f"Summary: {doc.summary}")
-  #     retorno = f"{str(doc.id)} + {doc.title} + {doc.summary}"
-  # return jsonify({"return": str(retorno)}), 200
+  return str(response)
+
+@bp.route("/ai/diagram")
+def initialize_diagram():
+  response = str(summary_to_diagram(diagram_title="first Insert"))
+  return response
