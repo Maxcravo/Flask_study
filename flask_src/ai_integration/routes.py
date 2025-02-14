@@ -14,10 +14,8 @@ def initialize_ai():
     response = text_summary()
     if not response:
       return jsonify({"error": "failed in summary generation"}), 500
-     
   # Fazendo insert no database
     insert_summary(Ai_summary, response)
-
     return jsonify({
       "message": "summary created!"
     }), 200

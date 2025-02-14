@@ -12,7 +12,7 @@ def insert_summary(db_class, class_data):
     return jsonify({"error: the variable is not a class"}), 500
   try:
     insert = db_class(
-      title = "test_function",
+      title = "new",
       summary = class_data
     )
     db.session.add(insert)
