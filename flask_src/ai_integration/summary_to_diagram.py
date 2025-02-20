@@ -28,7 +28,7 @@ def summary_to_diagram(diagram_title):
     # response = llm.complete(prompt=f"transform the given summary in a plantUML Activity Diagram syntax, the summary: {summary_db}, for example the plantUML syntax its like: @startumlstart :Hello world; :This is defined on several **lines**; end @enduml")
     plantuml_context = [
       ChatMessage(role= MessageRole.USER, 
-                  content= f"the syntax of the plantuml is: Simple action @startuml 
+                  content= f""" the syntax of the plantuml is: Simple action @startuml 
                   :Hello world; :This is defined on several **lines**; @enduml 
                   conditional: @startuml
                   start if (Graphviz installed?) then (yes) :process all\ndiagrams; else (no) :process only __sequence__ and __activity__ diagrams; endif stop @enduml 
@@ -77,10 +77,11 @@ def summary_to_diagram(diagram_title):
                   endif
                   #palegreen:action;
                   @enduml
-                  ")]
-
-    response = llm.achat_with_tools(chat_history=plantuml_context, user_msg= "create a plantuml diagram that summary the given text, the text:" summary_db, verbose=True)
-    print(response.message.content)
+                  """)]
+    print(summary_db)
+    # response = llm.achat_with_tools(chat_history=plantuml_context, user_msg= f"create a plantuml diagram that summary the given text, the text", verbose=True)
+    response = llm.chat(messages=plantuml_context)
+    print(response)
   except Exception as e:
     print(e)
   return response
