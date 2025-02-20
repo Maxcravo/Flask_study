@@ -1,7 +1,9 @@
 from flask_src.models.model_util import get_summary
 from llama_index.llms.groq import Groq
-from llama_index.core.llms import ChatMessage, MessageRole
-from llama_index.core.prompts import PromptTemplate
+from llama_index.core.memory import ChatMemoryBuffer
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, output_parsers
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core import Settings
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import json
@@ -13,7 +15,9 @@ class Diagram(BaseModel):
   summary: str
 
 def summary_to_diagram(diagram_title):
-  llm = Groq(model="deepseek-r1-distill-qwen-32b", pydantic_program_mode="llm", api_key = os.environ.get("GROQ_API_KEY"))
+  llm = Groq(model="deepseek-r1-distill-qwen-32b", api_key = os.environ.get("GROQ_API_KEY"))
+  Settings.llm = llm
+  Settings.embed_model = HuggingFaceEmbedding()
   summary_db = get_summary(diagram_title)
   if isinstance(summary_db, tuple):
     summary_db = summary_db[0].get_data(as_text=True) # forma como recebemos e lemos nossa mensagem, a resposta vem como uma tupla, onde o primeiro elemento é a resposta

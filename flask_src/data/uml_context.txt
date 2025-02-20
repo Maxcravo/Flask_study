@@ -1,0 +1,1039 @@
+Simple action
+Activities label starts with : and ends with ;.
+
+@startuml
+:Hello world;
+:This is defined on
+several **lines**;
+@enduml
+
+[Back to top]
+Start/Stop/End
+
+You can use start and stop keywords to denote the beginning and the end of a diagram.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+:Hello world;
+:This is defined on
+several **lines**;
+stop
+@enduml
+
+You can also use the end keyword.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+:Hello world;
+:This is defined on
+several **lines**;
+end
+@enduml
+
+[Back to top]
+Conditional
+
+You can use if, then, else and endif keywords to put tests in your diagram. Labels can be provided using parentheses.
+
+The 3 syntaxes are possible:
+
+    if (...) then (...) ... [else (...) ...] endif
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+
+if (Graphviz installed?) then (yes)
+  :process all\ndiagrams;
+else (no)
+  :process only
+  __sequence__ and __activity__ diagrams;
+endif
+
+stop
+
+@enduml
+
+    if (...) is (...) then ... [else (...) ...] endif
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+if (color?) is (<color:red>red) then
+:print red;
+else 
+:print not red;
+endif
+@enduml
+
+    if (...) equals (...) then ... [else (...) ...] endif
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+if (counter?) equals (5) then
+:print 5;
+else 
+:print not 5;
+endif
+@enduml
+
+[Ref. QA-301]
+
+Several tests (horizontal mode)
+
+You can use the elseif keyword to have several tests (by default, it is the horizontal mode):
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+if (condition A) then (yes)
+  :Text 1;
+elseif (condition B) then (yes)
+  :Text 2;
+  stop
+(no) elseif (condition C) then (yes)
+  :Text 3;
+(no) elseif (condition D) then (yes)
+  :Text 4;
+else (nothing)
+  :Text else;
+endif
+stop
+@enduml
+
+Several tests (vertical mode)
+
+You can use the command !pragma useVerticalIf on to have the tests in vertical mode:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+!pragma useVerticalIf on
+start
+if (condition A) then (yes)
+  :Text 1;
+elseif (condition B) then (yes)
+  :Text 2;
+  stop
+elseif (condition C) then (yes)
+  :Text 3;
+elseif (condition D) then (yes)
+  :Text 4;
+else (nothing)
+  :Text else;
+endif
+stop
+@enduml
+
+You can use the -P command-line option to specify the pragma:
+
+java -jar plantuml.jar -PuseVerticalIf=on
+
+[Refs. QA-3931, GH-582]
+[Back to top]
+Switch and case [switch, case, endswitch]
+
+You can use switch, case and endswitch keywords to put switch in your diagram.
+
+Labels can be provided using parentheses.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+switch (test?)
+case ( condition A )
+  :Text 1;
+case ( condition B ) 
+  :Text 2;
+case ( condition C )
+  :Text 3;
+case ( condition D )
+  :Text 4;
+case ( condition E )
+  :Text 5;
+endswitch
+stop
+@enduml
+
+[Back to top]
+Conditional with stop on an action [kill, detach]
+
+You can stop action on a if loop.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+if (condition?) then
+  :error;
+  stop
+endif
+#palegreen:action;
+@enduml
+
+But if you want to stop at the precise action, you can use the kill or detach keyword:
+
+    kill
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+if (condition?) then
+  #pink:error;
+  kill
+endif
+#palegreen:action;
+@enduml
+
+[Ref. QA-265]
+
+    detach
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+if (condition?) then
+  #pink:error;
+  detach
+endif
+#palegreen:action;
+@enduml
+
+[Back to top]
+Repeat loop
+
+Simple repeat loop
+
+You can use repeat and repeat while keywords to have repeat loops.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+
+repeat
+  :read data;
+  :generate diagrams;
+repeat while (more data?) is (yes) not (no)
+
+stop
+
+@enduml
+
+Repeat loop with repeat action and backward action
+
+It is also possible to use a full action as repeat target and insert an action in the return path using the backward keyword.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+
+repeat :foo as starting label;
+  :read data;
+  :generate diagrams;
+backward:This is backward;
+repeat while (more data?) is (yes)
+->no;
+
+stop
+
+@enduml
+
+[Ref. QA-5826]
+[Back to top]
+Break on a repeat loop [break]
+
+You can use the break keyword after an action on a loop.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+repeat
+  :Test something;
+    if (Something went wrong?) then (no)
+      #palegreen:OK;
+      break
+    endif
+    ->NOK;
+    :Alert "Error with long text";
+repeat while (Something went wrong with long text?) is (yes) not (no)
+->//merged step//;
+:Alert "Success";
+stop
+@enduml
+
+[Ref. QA-6105]
+[Back to top]
+Goto and Label Processing [label, goto]
+
+⚠ It is currently only experimental 🚧
+
+You can use label and goto keywords to denote goto processing, with:
+
+    label <label_name>
+    goto <label_name>
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+title Point two queries to same activity\nwith `goto`
+start
+if (Test Question?) then (yes)
+'space label only for alignment
+label sp_lab0
+label sp_lab1
+'real label
+label lab
+:shared;
+else (no)
+if (Second Test Question?) then (yes)
+label sp_lab2
+goto sp_lab1
+else
+:nonShared;
+endif
+endif
+:merge;
+@enduml
+
+[Ref. QA-15026, QA-12526 and initially QA-1626]
+[Back to top]
+While loop
+
+Simple while loop
+
+You can use while and endwhile keywords to have while loop.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+
+while (data available?)
+  :read data;
+  :generate diagrams;
+endwhile
+
+stop
+
+@enduml
+
+It is possible to provide a label after the endwhile keyword, or using the is keyword.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+while (check filesize ?) is (not empty)
+  :read file;
+endwhile (empty)
+:close file;
+@enduml
+
+While loop with backward action
+It is also possible to insert an action in the return path using the backward keyword.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+while (check filesize ?) is (not empty)
+  :read file;
+  backward:log;
+endwhile (empty)
+:close file;
+@enduml
+
+[Ref. QA-11144]
+
+Infinite while loop
+
+If you are using detach to form an infinite while loop, then you will want to also hide the partial arrow that results using -[hidden]->
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+:Step 1;
+if (condition1) then
+  while (loop forever)
+   :Step 2;
+  endwhile
+  -[hidden]->
+  detach
+else
+  :end normally;
+  stop
+endif
+@enduml
+
+[Back to top]
+Parallel processing [fork, fork again, end fork, end merge]
+
+You can use fork, fork again and end fork or end merge keywords to denote parallel processing.
+
+Simple fork
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action 1;
+fork again
+  :action 2;
+end fork
+stop
+@enduml
+
+fork with end merge
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action 1;
+fork again
+  :action 2;
+end merge
+stop
+@enduml
+
+[Ref. QA-5320]
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action 1;
+fork again
+  :action 2;
+fork again
+  :action 3;
+fork again
+  :action 4;
+end merge
+stop
+@enduml
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action 1;
+fork again
+  :action 2;
+  end
+end merge
+stop
+@enduml
+
+[Ref. QA-13731]
+
+Label on end fork (or UML joinspec):
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action A;
+fork again
+  :action B;
+end fork {or}
+stop
+@enduml
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+fork
+  :action A;
+fork again
+  :action B;
+end fork {and}
+stop
+@enduml
+
+[Ref. QA-5346]
+
+Other example
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+
+if (multiprocessor?) then (yes)
+  fork
+    :Treatment 1;
+  fork again
+    :Treatment 2;
+  end fork
+else (monoproc)
+  :Treatment 1;
+  :Treatment 2;
+endif
+
+@enduml
+
+[Back to top]
+Split processing
+
+Split
+You can use split, split again and end split keywords to denote split processing.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+split
+   :A;
+split again
+   :B;
+split again
+   :C;
+split again
+   :a;
+   :b;
+end split
+:D;
+end
+@enduml
+
+Input split (multi-start)
+You can use hidden arrows to make an input split (multi-start):
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+split
+   -[hidden]->
+   :A;
+split again
+   -[hidden]->
+   :B;
+split again
+   -[hidden]->
+   :C;
+end split
+:D;
+@enduml
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+split
+   -[hidden]->
+   :A;
+split again
+   -[hidden]->
+   :a;
+   :b;
+split again
+   -[hidden]->
+   (Z)
+end split
+:D;
+@enduml
+
+[Ref. QA-8662]
+
+Output split (multi-end)
+
+You can use kill or detach to make an output split (multi-end):
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+split
+   :A;
+   kill
+split again
+   :B;
+   detach
+split again
+   :C;
+   kill
+end split
+@enduml
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+split
+   :A;
+   kill
+split again
+   :b;
+   :c;
+   detach
+split again
+   (Z)
+   detach
+split again
+   end
+split again
+   stop
+end split
+@enduml
+
+[Back to top]
+Notes
+
+Text formatting can be done using creole wiki syntax.
+
+A note can be floating, using floating keyword.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+:foo1;
+floating note left: This is a note
+:foo2;
+note right
+  This note is on several
+  //lines// and can
+  contain <b>HTML</b>
+  ====
+  * Calling the method ""foo()"" is prohibited
+end note
+stop
+
+@enduml
+
+You can add note on backward activity:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+repeat :Enter data;
+:Submit;
+backward :Warning;
+note right: Note
+repeat while (Valid?) is (No) not (Yes)
+stop
+@enduml
+
+[Ref. QA-11788]
+
+You can add note on partition activity:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+partition "**process** HelloWorld" {
+    note
+        This is my note
+        ----
+        //Creole test//
+    end note
+    :Ready;
+    :HelloWorld(i)>
+    :Hello-Sent;
+}
+@enduml
+
+[Ref. QA-2398]
+[Back to top]
+Colors
+
+You can specify a color for some activities.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+
+start
+:starting progress;
+#HotPink:reading configuration files
+These files should be edited at this point!;
+#AAAAAA:ending of the process;
+
+@enduml
+
+You can also use gradient color.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+partition #red/white testPartition {
+        #blue\green:testActivity;
+}
+@enduml
+
+[Ref. QA-4906]
+[Back to top]
+Lines without arrows
+
+You can use skinparam ArrowHeadColor none in order to connect activities using lines only, without arrows.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+skinparam ArrowHeadColor none
+start
+:Hello world;
+:This is on defined on
+several **lines**;
+stop
+@enduml
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+skinparam ArrowHeadColor none
+start
+repeat :Enter data;
+:Submit;
+backward :Warning;
+repeat while (Valid?) is (No) not (Yes)
+stop
+@enduml
+
+[Back to top]
+Arrows
+
+Using the -> notation, you can add texts to arrow, and change their color.
+
+It's also possible to have dotted, dashed, bold or hidden arrows.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+:foo1;
+-> You can put text on arrows;
+if (test) then
+  -[#blue]->
+  :foo2;
+  -[#green,dashed]-> The text can
+  also be on several lines
+  and **very** long...;
+  :foo3;
+else
+  -[#black,dotted]->
+  :foo4;
+endif
+-[#gray,bold]->
+:foo5;
+@enduml
+
+[Back to top]
+Connector
+
+You can use parentheses to denote connector.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+:Some activity;
+(A)
+detach
+(A)
+:Other activity;
+@enduml
+
+[Back to top]
+Color on connector
+
+You can add color on connector.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+:The connector below
+wishes he was blue;
+#blue:(B)
+:This next connector
+feels that she would
+be better off green;
+#green:(G)
+stop
+@enduml
+
+[Ref. QA-10077]
+[Back to top]
+Grouping or partition
+
+Group
+You can group activity together by defining group:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+group Initialization 
+    :read config file;
+    :init internal variable;
+end group
+group Running group
+    :wait for user interaction;
+    :print information;
+end group
+
+stop
+@enduml
+
+Partition
+You can group activity together by defining partition:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+partition Initialization {
+    :read config file;
+    :init internal variable;
+}
+partition Running {
+    :wait for user interaction;
+    :print information;
+}
+
+stop
+@enduml
+
+It's also possible to change partition color:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+partition #lightGreen "Input Interface" {
+    :read config file;
+    :init internal variable;
+}
+partition Running {
+    :wait for user interaction;
+    :print information;
+}
+stop
+@enduml
+
+[Ref. QA-2793]
+
+It's also possible to add link to partition:
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+partition "[[http://plantuml.com partition_name]]" {
+    :read doc. on [[http://plantuml.com plantuml_website]];
+    :test diagram;
+}
+end
+@enduml
+
+[Ref. QA-542]
+
+Group, Partition, Package, Rectangle or Card
+You can group activity together by defining:
+
+    group;
+    partition;
+    package;
+    rectangle;
+    card.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+start
+group Group
+  :Activity;
+end group
+floating note: Note on Group
+
+partition Partition {
+  :Activity;
+}
+floating note: Note on Partition
+
+package Package {
+  :Activity;
+}
+floating note: Note on Package 
+
+rectangle Rectangle {
+  :Activity;
+}
+floating note: Note on Rectangle 
+
+card Card {
+  :Activity;
+}
+floating note: Note on Card
+end
+@enduml
+
+[Back to top]
+Swimlanes
+
+Using pipe |, you can define swimlanes.
+
+It's also possible to change swimlanes color.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+|Swimlane1|
+start
+:foo1;
+|#AntiqueWhite|Swimlane2|
+:foo2;
+:foo3;
+|Swimlane1|
+:foo4;
+|Swimlane2|
+:foo5;
+stop
+@enduml
+
+You can add if conditional or repeat or while loop within swimlanes.
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+|#pink|Actor_For_red|
+start
+if (color?) is (red) then
+#pink:**action red**;
+:foo1;
+else (not red)
+|#lightgray|Actor_For_no_red|
+#lightgray:**action not red**;
+:foo2;
+endif
+|Next_Actor|
+#lightblue:foo3;
+:foo4;
+|Final_Actor|
+#palegreen:foo5;
+stop
+@enduml
+
+You can also use alias with swimlanes, with this syntax:
+
+    |[#<color>|]<swimlane_alias>| <swimlane_title>
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+|#palegreen|f| fisherman
+|c| cook
+|#gold|e| eater
+|f|
+start
+:go fish;
+|c|
+:fry fish;
+|e|
+:eat fish;
+stop
+@enduml
+
+[Ref. QA-2681]
+[Back to top]
+Detach or kill [detach, kill]
+
+It's possible to remove an arrow using the detach or kill keyword:
+
+    detach
+
+[Copy to clipboard]
+[Edit online] 	
+
+@startuml
+ :start;
+ fork
+   :foo1;
+   :foo2;
+ fork again
+   :foo3;
+   detach
+ endfork
+ if (foo4) then
+   :foo5;
+   detach
+ endif
+ :foo6;
+ detach
+ :foo7;
+ stop
+@enduml
+
+    kill
