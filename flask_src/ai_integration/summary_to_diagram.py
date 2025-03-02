@@ -10,10 +10,6 @@ import json
 import os
 load_dotenv()
 
-class Diagram(BaseModel):
-  """Descrição do prompt para o diagrama"""
-  summary: str
-
 def summary_to_diagram(diagram_title):
   llm = Groq(model="deepseek-r1-distill-qwen-32b", api_key = os.environ.get("GROQ_API_KEY"))
   Settings.llm = llm
@@ -21,26 +17,30 @@ def summary_to_diagram(diagram_title):
   summary_db = get_summary(diagram_title)
   if isinstance(summary_db, tuple):
     summary_db = summary_db[0].get_data(as_text=True) # forma como recebemos e lemos nossa mensagem, a resposta vem como uma tupla, onde o primeiro elemento é a resposta
-    print("Resposta do função:", summary_db)
+    # print("Resposta do função:", summary_db)
   else:
     summary_db = str(summary_db)
-  print("Resposta do DB:", summary_db)
-  # prompt_template = PromptTemplate("translate the text to portuguese: {summary}")
+  # print("Resposta do DB:", summary_db)
   try:
-    print(summary_db)
+    #TODO Ver como é possível fazer um diagrama a partir de um texto
+    #TODO essa parte de ler o arquivo deveria poder ser realizada apenas 1 vez
     path = "flask_src/data/uml_context.txt"
-    uml_context = SimpleDirectoryReader(input_files=[path]).load_data() 
-    print(f"leitura do txt: {uml_context}" )
+    uml_context = SimpleDirectoryReader(input_files=[path]).load_data()
+    # print(f"leitura do txt: {uml_context}" )
     index = VectorStoreIndex.from_documents(uml_context)
     memory_string =  ChatMemoryBuffer.from_defaults(token_limit=1200)
+
     llm_chat = index.as_chat_engine(
       chat_mode="context",
       memory = memory_string,
       system_prompt= ("create a diagram that summary the text given by the user, using the activity diagram syntax already given. provide only the final answer without additional thoughts"),
     )
     response = llm_chat.chat( message=f"give me a diagram about: {summary_db}")
-    # response = llm.achat_with_tools(chat_history=plantuml_context, user_msg= f"create a plantuml diagram that summary the given text, the text", verbose=True)
-    print(response)
+    response = str(response).split("```")[1]
+    file_path = os.path.join("flask_src/data/saved_summary", f"{diagram_title}.txt" )
+    with open(file_path,"x") as file_txt:
+      file_txt.write(f"summary: \n \n {summary_db} \n \n  diagram: {response}")
+    print(f"resposta depois do split: {response}")
   except Exception as e:
     print(e)
   return response
