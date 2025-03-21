@@ -5,9 +5,20 @@ from flask_src.models.model import Ai_summary
 from flask_src.models.model_util import insert_summary, get_summary
 from sqlalchemy.exc import SQLAlchemyError
 from extensions import db
-from flask import jsonify
-
+from flask import jsonify, request
+import requests
+import json
 #! Tudo isso tem que ser feito no controlador a rota tem que só definir a rota e receber as funções do controlador
+
+# tenho que ajeitar essa rota para receber os dados do servidor do next
+@bp.route("/ai/data/")
+def get_data():
+  if request.method == "POST":
+    data = request.get_json()
+    print(data)
+    return jsonify(data)
+  # return jsonify({"message": "GET request received"})
+    
 
 @bp.route("/ai")
 def initialize_ai():
