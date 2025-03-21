@@ -1,24 +1,33 @@
+"use server"
 const fs = require("fs");
 const pdfParser = require("pdf2json")
 const path = require('path')
+const pdf = require('pdf-parse');
 
-// Supondo aqui que já sei o path do arquivo e só preciso do nome path = src/public/uploads/
-const processPdf = async (fileName) => {
-  const pdf = new pdfParser();
-  let pdfPath = path.join(process.cwd(), "public/uploads/");
-  
-  pdf.on("pdfParser_dataError", (errData) =>
-    console.error(errData.parserError)
-  );
-  pdf.on("pdfParser_dataReady", (pdfData) => {
-    fs.writeFile(
-    "./pdf2json/test/F1040EZ.json", {flag: "w+"},
-    JSON.stringify(pdfData),
-    (data) => console.log(data)
-    );
-  });
-  
-  pdf.loadPDF(pdfPath + "testando_1_2_3.pdf");
-}
+// async function processPdf (fileName)  {
+//   let pdfPath = path.join(process.cwd(), "/public/uploads/");
+//   let dataBuffer = fs.readFileSync(pdfPath + fileName);
+//   await pdf(dataBuffer).then((data) => {
+//     // Aqui  pegamos o texto do arquivo PDF e podemos tranformar em JSON
+//     // console.log(data.text);
+//     return data.text;
+//   }).catch((error) => {
+//     console.log(error);
+//   });
+// } 
 
-processPdf();
+// module.exports = processPdf;
+// -------------------------------------------------
+
+async function processPdf (fileName)  {
+  try{
+  let pdfPath = path.join(process.cwd(), "/public/uploads/");
+  let dataBuffer = fs.readFileSync(pdfPath + fileName);
+  const data = await pdf(dataBuffer)
+  return data.text;
+  } catch (error) {
+    console.log(error);
+  }
+} 
+
+module.exports = processPdf;

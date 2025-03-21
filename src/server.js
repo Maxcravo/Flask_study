@@ -3,6 +3,7 @@ const multer = require("multer");
 const cors = require("cors");
 const path = require("path");
 const fs =  require("fs")
+const processPdf = require("./services/processPdf");
 
 const app = express();
 app.use(cors());
@@ -21,8 +22,8 @@ const storage = multer.diskStorage({ // Aqui basicamente setamos o destino do ar
     cb(null, uploadsDir); 
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + "-" + file.originalname); // Aqui estamos definindo o nome do arquivo que o usuário enviou, roubei a ideia do vídeo que eu vi no youtube.
-    cb(null, pdfName = new Date().toISOString() + "-" + file.originalname); 
+    cb(null, file.originalname); // Aqui estamos definindo o nome do arquivo que o usuário enviou, roubei a ideia do vídeo que eu vi no youtube.
+    cb(null, pdfName = file.originalname); 
   }
 })
 
@@ -48,15 +49,19 @@ app.listen(PORT,()=>{
   console.log(`Servidor rodando na porta ${PORT}`);
 })
 
+//TODO AQUI EU QUERO ALÉM DE ENVIAR O ARQUIVO IREI JÁ TRATAR UTILIZANDO A FUNÇÃO processPdf
 // Criar o endpoint para uploads de arquivos
-app.post("/api/multer", upload.single("file"), (req, res) => {
+//! NUNCA ESQUECER QUE TENHO QUE GARANTIR QUE A FUNÇÃO DA ROTA SEJA ASYNC SE NÃO SEMPRE VOU RECEBER PROMISSE {<}
+app.post("/api/multer", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
     return  res.status(400).send("Arquivo não encontrado"); // caso o usuário não envie o arquivo retornamos error 400
     }
+    let pdf_text = await processPdf(req.file.filename);
+    console.log(pdf_text);    
     res.status(200).json({ // Caso tudo tenha sido enviado corretamente, retornamos o status 200 e o json com infos do arquivo.
       message: "arquivo enviado com sucesso",
-      path: `/uploads/${req.file.filename}`,
+      text: `string do pdf ${pdf_text}`
     })
   } catch (error) {
     res.status(500).json({error: error.messages});
