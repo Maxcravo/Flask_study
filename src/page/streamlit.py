@@ -5,17 +5,17 @@ import streamlit as st
 from io import StringIO
 from src.services.get_file_path import file_path
 import tempfile
-
-
+import re
 
 st.title("Usando streamlit")
-
 uploaded_file = st.file_uploader("Select a file", type="pdf")
 if uploaded_file is not None:
   response = file_path(uploaded_file)
   if response is not None:
       # cria um arquivo temporario txt que armazena o texto do summario
       temp = tempfile.NamedTemporaryFile(suffix=".txt")
+      # Usamos um regex para remover o texto que está entre o <think> e </think>(.*?)
+      response = clean_text = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL)
       temp.write(response.encode())
       temp.seek(0)
       with open(temp.name, "r+") as f:

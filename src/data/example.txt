@@ -1,0 +1,19 @@
+Example of a mindMap Diragram of the plantUML
+
+each * represents a hierarch, the elements with only 1 star is the top of hierarch and the elements with more star 
+is below in the hierarch and are linked with the elements in the top os hierarch
+
+@startmindmap
+
+* <&flag>Debian
+** <&globe>Ubuntu
+*** Linux Mint
+*** Kubuntu
+*** Lubuntu
+*** KDE Neon
+** <&graph>LMDE
+** <&pulse>SolydXK
+** <&people>SteamOS
+** <&star>Raspbian with a very long name
+*** <s>Raspmbc</s> => OSMC
+*** <s>Raspyfi</s> => Volumio

@@ -7,6 +7,7 @@ from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import Settings, VectorStoreIndex
 from dotenv import load_dotenv
+import re
 import os
 load_dotenv()
 
@@ -38,12 +39,14 @@ def summary(file_path):
     )
   try:
     response = summary_query.query("summarize in detail the given document but not surpass 10k tokens")
+    # response = str(response.response).split("<think/>")[1]
     response = response.response
-    summary_diagram(response)
+    diagram_response = summary_diagram(response)
+    response_return = str(response + "\n \n" + diagram_response)
   except Exception as e:
     print(f"\n \n problem with the return of the Groq API: {e} \n \n")
     # Inicio o summary que vai criar um summario com base no texto dado pelo usuario
-  return response
+  return response_return
 
 def summary_diagram(summary_response):
   # llm = initialize_groq()
@@ -57,7 +60,9 @@ def summary_diagram(summary_response):
     memory=memory,
   )
   try:
-    response = llm_chat.chat("create a diagram that summary the text given by the user, using the syntax alread given by the user.")  
+    response = llm_chat.chat(f"create a diagram that summary the text given by the user, using the syntax alread given by the user. the text is {summary_response}")
+    response = response.response  
   except Exception as e:
-    print(f"problem with the creation of the diagram: {e}")
-  print(f"response: {response}")
+    print(f"problem with the creation of the diagram: {e}")\
+  # usamos essa parte para extrair apenas a parte necessária da resposta.
+  return response
