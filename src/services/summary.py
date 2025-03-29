@@ -3,19 +3,28 @@ from llama_index.llms.groq import Groq
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core import SummaryIndex 
+from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.core import Settings
+from llama_index.core import Settings, VectorStoreIndex
 from dotenv import load_dotenv
 import os
 load_dotenv()
+
+def initialize_groq():
+  """ Initialize the Groq LLM and set it as the default LLM in the Settings."""
+  try:
+    llm = Groq(model="deepseek-r1-distill-qwen-32b", api_key= os.getenv("GROQ_API_KEY"))
+    Settings.llm = llm
+    Settings.embed_model = HuggingFaceEmbedding()
+    return llm
+  except Exception as e:
+    print(f"error {e}")
 
 def summary(file_path):
   print(f"file location: {file_path}, api key: {os.getenv('GROQ_API_KEY')}")
   nest_asyncio.apply()
   try:
-    llm = Groq(model="llama3-8b-8192", api_key= os.getenv("GROQ_API_KEY"))
-    Settings.llm = llm
-    Settings.embed_model = HuggingFaceEmbedding()
+    llm = initialize_groq()
   except Exception as e:
     return print(f"error in connect to grog or dowload face Embed:{e}")
   response_list = []
@@ -29,7 +38,26 @@ def summary(file_path):
     )
   try:
     response = summary_query.query("summarize in detail the given document but not surpass 10k tokens")
-    response_list.append(response)
+    response = response.response
+    summary_diagram(response)
   except Exception as e:
-    print(f"problem with the return of the Groq API: {e}")
-  return response.response
+    print(f"\n \n problem with the return of the Groq API: {e} \n \n")
+    # Inicio o summary que vai criar um summario com base no texto dado pelo usuario
+  return response
+
+def summary_diagram(summary_response):
+  # llm = initialize_groq()
+  dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+  example_path = os.path.join(dir, "data", "example.txt")
+  context = SimpleDirectoryReader(input_files=[example_path]).load_data()
+  index = VectorStoreIndex.from_documents(context)
+  memory = ChatMemoryBuffer.from_defaults(token_limit=2048)
+  llm_chat = index.as_chat_engine(
+    chat_mode="context",
+    memory=memory,
+  )
+  try:
+    response = llm_chat.chat("create a diagram that summary the text given by the user, using the syntax alread given by the user.")  
+  except Exception as e:
+    print(f"problem with the creation of the diagram: {e}")
+  print(f"response: {response}")

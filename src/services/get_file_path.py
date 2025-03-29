@@ -1,6 +1,6 @@
 import tempfile
 import os
-from services.summary import summary
+from src.services.summary import summary
 
 
 # Crio um diretorio temporario para salvar o arquivo e depois ler o arquivo

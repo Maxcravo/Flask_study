@@ -1,8 +1,12 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import streamlit as st
 from io import StringIO
-from services.get_file_path import file_path
-import os
+from src.services.get_file_path import file_path
 import tempfile
+
+
 
 st.title("Usando streamlit")
 
@@ -18,5 +22,3 @@ if uploaded_file is not None:
         # Simplesmente o REACT nativo do python absolute cinema
         st.download_button(label="Download the summary", data=f)
         st.write(temp.name)
-  
-  
