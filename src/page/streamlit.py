@@ -1,13 +1,13 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import streamlit as st
 from io import StringIO
 from src.services.get_file_path import file_path
+from src.services.summary import test_gemini
 import tempfile
 import re
 
-st.title("Usando streamlit")
+st.title("Resumo e Diagrama do texto")
 uploaded_file = st.file_uploader("Select a file", type="pdf")
 if uploaded_file is not None:
   response = file_path(uploaded_file)
@@ -20,5 +20,7 @@ if uploaded_file is not None:
       temp.seek(0)
       with open(temp.name, "r+") as f:
         # Simplesmente o REACT nativo do python absolute cinema
-        st.download_button(label="Download the summary", data=f)
+        st.download_button(label="Download the summary", data=f, file_name="summary.txt")
         st.write(temp.name)
+
+st.button("Test Gemini", on_click=test_gemini)

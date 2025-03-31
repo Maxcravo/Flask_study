@@ -1,5 +1,6 @@
 import nest_asyncio
-from llama_index.llms.groq import Groq
+# from llama_index.llms.groq import Groq
+from llama_index.llms.gemini import Gemini
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core import SimpleDirectoryReader
 from llama_index.core import SummaryIndex 
@@ -14,15 +15,20 @@ load_dotenv()
 def initialize_groq():
   """ Initialize the Groq LLM and set it as the default LLM in the Settings."""
   try:
-    llm = Groq(model="deepseek-r1-distill-qwen-32b", api_key= os.getenv("GROQ_API_KEY"))
+    llm = Gemini(model="models/gemini-2.0-flash", api_key= os.getenv("GOOGLE_API_KEY"))
     Settings.llm = llm
     Settings.embed_model = HuggingFaceEmbedding()
     return llm
   except Exception as e:
     print(f"error {e}")
 
+def test_gemini():
+  llm = initialize_groq()
+  response = llm.complete("talk about the process of read pdf data in python")
+  print(response)
+
+
 def summary(file_path):
-  print(f"file location: {file_path}, api key: {os.getenv('GROQ_API_KEY')}")
   nest_asyncio.apply()
   try:
     llm = initialize_groq()
