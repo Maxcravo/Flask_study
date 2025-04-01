@@ -12,7 +12,7 @@ import re
 import os
 load_dotenv()
 
-def initialize_groq():
+def initialize_llm():
   """ Initialize the Groq LLM and set it as the default LLM in the Settings."""
   try:
     llm = Gemini(model="models/gemini-2.0-flash", api_key= os.getenv("GOOGLE_API_KEY"))
@@ -23,7 +23,7 @@ def initialize_groq():
     print(f"error {e}")
 
 def test_gemini():
-  llm = initialize_groq()
+  llm = initialize_llm()
   response = llm.complete("talk about the process of read pdf data in python")
   print(response)
 
@@ -31,7 +31,7 @@ def test_gemini():
 def summary(file_path):
   nest_asyncio.apply()
   try:
-    llm = initialize_groq()
+    llm = initialize_llm()
   except Exception as e:
     return print(f"error in connect to grog or dowload face Embed:{e}")
   response_list = []
@@ -44,7 +44,7 @@ def summary(file_path):
     use_async= True
     )
   try:
-    response = summary_query.query("summarize in detail the given document but not surpass 10k tokens")
+    response = summary_query.query("summarize in detail the given document but not surpass 6000 tokens, and get the main bibliográfics references of the text")
     # response = str(response.response).split("<think/>")[1]
     response = response.response
     diagram_response = summary_diagram(response)

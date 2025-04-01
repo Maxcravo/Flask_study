@@ -1,5 +1,6 @@
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import streamlit as st
 from io import StringIO
 from src.services.get_file_path import file_path
@@ -24,3 +25,4 @@ if uploaded_file is not None:
         st.write(temp.name)
 
 st.button("Test Gemini", on_click=test_gemini)
+
